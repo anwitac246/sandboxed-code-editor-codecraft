@@ -1,9 +1,11 @@
-import type { Config } from "tailwindcss";
-
-export default {
+/** @type {import('tailwindcss').Config} */
+module.exports = {
   darkMode: "class",
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
-  prefix: "",
+  content: [
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
   theme: {
     container: {
       center: true,
@@ -61,14 +63,6 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
         "pulse-glow": {
           "0%, 100%": { opacity: "0.4" },
           "50%": { opacity: "0.8" },
@@ -79,12 +73,10 @@ export default {
         },
       },
       animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
         "pulse-glow": "pulse-glow 3s ease-in-out infinite",
         "cursor-blink": "cursor-blink 1s step-end infinite",
       },
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config;
+};
