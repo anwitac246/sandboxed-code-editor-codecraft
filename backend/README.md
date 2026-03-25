@@ -1,4 +1,4 @@
-# &lt;img src="https://raw.githubusercontent.com/anwitac246/sandboxed-code-editor-codecraft/main/public/window.svg" width="30"&gt; CodeCraft - Backend Service
+# CodeCraft - Backend Service
 
 This directory contains the backend service for the CodeCraft application. It is a Go-based API responsible for user authentication, session management, and other core business logic.
 
@@ -12,7 +12,7 @@ This directory contains the backend service for the CodeCraft application. It is
 
 ---
 
-##  Folder Structure
+## Folder Structure
 
 The backend follows a standard Go project layout to maintain a clean and scalable architecture.
 

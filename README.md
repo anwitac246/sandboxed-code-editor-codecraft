@@ -1,8 +1,8 @@
-# &lt;img src="https://raw.githubusercontent.com/anwitac246/sandboxed-code-editor-codecraft/main/public/window.svg" width="30"&gt; CodeCraft: Sandboxed Code Editor
+# CodeCraft: Sandboxed Code Editor
 
 CodeCraft is a modern, web-based code editor that provides a secure, sandboxed environment for executing code. It features a robust authentication system and a scalable backend architecture, designed to deliver a seamless and secure developer experience.
 
-## ✨ Tech Stack
+## Tech Stack
 
 The project is a full-stack application built with a modern technology set for both the frontend and backend.
 
