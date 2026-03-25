@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { getAccessToken, clearTokens } from "@/lib/tokens";
 import { logout } from "@/service/auth.service";
 import { navLinks } from "@/config/nav";
@@ -48,12 +49,20 @@ export function Navbar() {
 
         <div className="hidden items-center gap-3 md:flex">
           {isLoggedIn ? (
-            <Button variant="secondary" size="md" onClick={handleLogout}>
-              Logout
-            </Button>
+            <>
+              <Link
+                href="/dashboard/projects"
+                className="rounded-lg px-4 py-2 text-sm font-semibold text-muted-foreground transition-all hover:text-foreground"
+              >
+                Dashboard
+              </Link>
+              <Button variant="secondary" size="md" onClick={handleLogout}>
+                Logout
+              </Button>
+            </>
           ) : (
             <a
-              href="/login"
+              href="/auth/login"
               className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all hover:opacity-90 glow-primary"
             >
               Get Started
@@ -88,12 +97,21 @@ export function Navbar() {
               </a>
             ))}
             {isLoggedIn ? (
-              <Button variant="secondary" size="md" onClick={handleLogout} className="mt-2 w-full">
-                Logout
-              </Button>
+              <div className="flex flex-col gap-4">
+                <Link
+                  href="/dashboard/projects"
+                  className="rounded-lg bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                <Button variant="secondary" size="md" onClick={handleLogout} className="w-full">
+                  Logout
+                </Button>
+              </div>
             ) : (
               <a
-                href="/login"
+                href="/auth/login"
                 className="mt-2 rounded-lg bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground"
               >
                 Get Started

@@ -33,7 +33,7 @@ export function useAuth(): UseAuthReturn {
         storeTokens(response.token, response.refreshToken, response.expiresAt);
 
         if (response.user?.id) {
-          router.push(`/users/${response.user.id}/projects`);
+          router.push('/dashboard/projects');
         } else {
           // Fallback redirect if user ID is not available for some reason
           router.push("/");
