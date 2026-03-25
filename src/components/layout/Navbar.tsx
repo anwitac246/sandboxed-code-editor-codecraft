@@ -1,5 +1,9 @@
 'use client';
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { getAccessToken, clearTokens } from "@/lib/tokens";
+import { logout } from "@/service/auth.service";
+import { Button } from "@/components/ui/buttons";
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -9,6 +13,22 @@ const navLinks = [
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check for token on client-side
+    const token = getAccessToken();
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogout = async () => {
+    await logout();
+    setIsLoggedIn(false);
+    router.push("/");
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
@@ -32,12 +52,18 @@ export function Navbar() {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
-          <a
-            href="/login"
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all hover:opacity-90 glow-primary"
-          >
-            Get Started
-          </a>
+          {isLoggedIn ? (
+            <Button variant="secondary" size="md" onClick={handleLogout}>
+              Logout
+            </Button>
+          ) : (
+            <a
+              href="/login"
+              className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all hover:opacity-90 glow-primary"
+            >
+              Get Started
+            </a>
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -66,12 +92,18 @@ export function Navbar() {
                 {link.label}
               </a>
             ))}
-            <a
-              href="/login"
-              className="mt-2 rounded-lg bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground"
-            >
-              Get Started
-            </a>
+            {isLoggedIn ? (
+              <Button variant="secondary" size="md" onClick={handleLogout} className="mt-2 w-full">
+                Logout
+              </Button>
+            ) : (
+              <a
+                href="/login"
+                className="mt-2 rounded-lg bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground"
+              >
+                Get Started
+              </a>
+            )}
           </div>
         </div>
       )}

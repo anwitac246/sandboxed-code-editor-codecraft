@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { loginWithEmail, loginWithGoogle, storeTokens } from "@/service/auth.service";
 import type { LoginRequest, FormErrors, LoginResponse } from "@/types/auth";
 
@@ -17,6 +18,7 @@ export function useAuth(): UseAuthReturn {
   const [isLoading,       setIsLoading]       = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [errors,          setErrors]          = useState<FormErrors>({});
+  const router = useRouter();
 
   const clearErrors = useCallback(() => setErrors({}), []);
 
@@ -28,12 +30,14 @@ export function useAuth(): UseAuthReturn {
       try {
         const response = await loginWithEmail(data);
 
-        // response.token / response.refreshToken are the flat aliases
-        // normalised in auth.service — no breaking change to this hook's callers
         storeTokens(response.token, response.refreshToken, response.expiresAt);
 
-        // TODO: Update global auth context / redirect
-        // e.g. router.push("/dashboard")
+        if (response.user?.id) {
+          router.push(`/users/${response.user.id}/projects`);
+        } else {
+          // Fallback redirect if user ID is not available for some reason
+          router.push("/");
+        }
 
         return response;
       } catch (err: unknown) {
@@ -45,7 +49,7 @@ export function useAuth(): UseAuthReturn {
         setIsLoading(false);
       }
     },
-    []
+    [router]
   );
 
   const handleGoogleLogin = useCallback(async (): Promise<void> => {
@@ -53,8 +57,12 @@ export function useAuth(): UseAuthReturn {
     setErrors({});
 
     try {
-      await loginWithGoogle();
-      // TODO: Handle redirect / update global auth context
+      const response = await loginWithGoogle();
+      if (response.user?.id) {
+        router.push(`/users/${response.user.id}/projects`);
+      } else {
+        router.push("/");
+      }
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Google sign-in failed.";
@@ -62,7 +70,7 @@ export function useAuth(): UseAuthReturn {
     } finally {
       setIsGoogleLoading(false);
     }
-  }, []);
+  }, [router]);
 
   return {
     isLoading,
