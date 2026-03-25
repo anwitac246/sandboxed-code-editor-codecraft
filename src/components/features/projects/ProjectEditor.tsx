@@ -17,7 +17,7 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
   const activeFile = project.files.find((f) => f.id === activeFileId) ?? null;
 
   return (
-    <div className="flex flex-1 overflow-hidden rounded-2xl border border-zinc-800/60 bg-zinc-900/40 backdrop-blur-sm shadow-[0_0_60px_-12px_rgba(99,102,241,0.15)]">
+    <div className="flex flex-1 overflow-hidden border-t border-zinc-800/40">
       <FileTree
         files={project.files}
         activeFileId={activeFileId}

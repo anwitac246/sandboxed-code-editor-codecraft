@@ -1,21 +1,20 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Star, FileCode2, Clock } from 'lucide-react';
 import { Project } from '@/types/project';
 
 const langColors: Record<string, string> = {
-  typescript: 'text-blue-400 bg-blue-500/10',
-  javascript: 'text-yellow-400 bg-yellow-500/10',
-  html: 'text-orange-400 bg-orange-500/10',
-  css: 'text-purple-400 bg-purple-500/10',
+  typescript: '#4FC3F7',
+  javascript: '#F9A825',
+  html: '#EF6C00',
+  css: '#AB47BC',
 };
 
 function timeAgo(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
   const days = Math.floor(diff / 86400000);
-  if (days === 0) return 'Today';
-  if (days === 1) return 'Yesterday';
+  if (days === 0) return 'today';
+  if (days === 1) return '1d ago';
   return `${days}d ago`;
 }
 
@@ -27,69 +26,62 @@ interface ProjectCardProps {
 export function ProjectCard({ project, onToggleStar }: ProjectCardProps) {
   const router = useRouter();
   const langs = [...new Set(project.files.map((f) => f.language))];
+  const primaryLang = langs[0];
 
   return (
     <div
       onClick={() => router.push(`/dashboard/projects/${project.id}`)}
-      className="group relative bg-zinc-900/60 border border-zinc-800/70 rounded-2xl p-5 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-zinc-700/80 hover:shadow-[0_8px_40px_-8px_rgba(99,102,241,0.25)] hover:bg-zinc-900/80 backdrop-blur-sm"
+      className="group relative border border-zinc-800/80 bg-[#0d1117] cursor-pointer transition-all duration-200 hover:border-zinc-600 p-6 flex flex-col gap-4"
     >
-      {/* Glow blob on hover */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/0 to-violet-500/0 group-hover:from-blue-500/5 group-hover:to-violet-500/5 transition-all duration-300 pointer-events-none" />
+      {/* Top accent line on hover */}
+      <div
+        className="absolute top-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity"
+        style={{
+          background: `linear-gradient(90deg, transparent, ${langColors[primaryLang] ?? '#4FC3F7'}40, transparent)`,
+        }}
+      />
 
       {/* Header */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-zinc-700 to-zinc-800 border border-zinc-700/50 flex items-center justify-center group-hover:from-blue-500/20 group-hover:to-violet-500/20 group-hover:border-blue-500/30 transition-all">
-            <FileCode2 size={14} className="text-zinc-400 group-hover:text-blue-300 transition-colors" />
-          </div>
-          <h3 className="text-sm font-semibold text-zinc-100 tracking-tight leading-snug">
-            {project.name}
-          </h3>
-        </div>
+      <div className="flex items-start justify-between">
+        <h3 className="text-sm font-semibold text-zinc-100 tracking-tight leading-snug">
+          {project.name}
+        </h3>
         <button
           onClick={(e) => {
             e.stopPropagation();
             onToggleStar(project.id);
           }}
-          className="p-1 rounded-lg hover:bg-zinc-800 transition-colors"
+          className="text-xs font-mono transition-colors ml-4 shrink-0"
+          style={{ color: project.isStarred ? '#F9A825' : '#3f3f46' }}
         >
-          <Star
-            size={14}
-            className={
-              project.isStarred
-                ? 'fill-amber-400 text-amber-400'
-                : 'text-zinc-600 hover:text-zinc-400'
-            }
-          />
+          {project.isStarred ? '★' : '☆'}
         </button>
       </div>
 
       {/* Description */}
-      <p className="text-xs text-zinc-500 leading-relaxed mb-4 line-clamp-2 min-h-[2.5rem]">
-        {project.description ?? 'No description provided.'}
+      <p className="text-xs text-zinc-500 leading-relaxed line-clamp-2 font-mono flex-1">
+        {project.description ?? '// no description'}
       </p>
 
       {/* Footer */}
       <div className="flex items-center justify-between">
-        <div className="flex gap-1.5 flex-wrap">
+        <div className="flex gap-2">
           {langs.map((lang) => (
             <span
               key={lang}
-              className={`text-[10px] px-2 py-0.5 rounded-full font-medium uppercase tracking-wide ${langColors[lang] ?? 'text-zinc-400 bg-zinc-800'}`}
+              className="text-[10px] font-mono uppercase tracking-wider"
+              style={{ color: langColors[lang] ?? '#71717a' }}
             >
               {lang}
             </span>
           ))}
           {langs.length === 0 && (
-            <span className="text-[10px] px-2 py-0.5 rounded-full text-zinc-600 bg-zinc-800">
-              Empty
-            </span>
+            <span className="text-[10px] font-mono text-zinc-700">empty</span>
           )}
         </div>
-        <div className="flex items-center gap-1 text-[10px] text-zinc-600">
-          <Clock size={10} />
+        <span className="text-[10px] font-mono text-zinc-700">
           {timeAgo(project.updatedAt)}
-        </div>
+        </span>
       </div>
     </div>
   );

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Star, FileCode2 } from 'lucide-react';
 import { Project } from '@/types/project';
 import { projectService } from '@/service/project.service';
 import { ProjectEditor } from '@/components/features/projects/ProjectEditor';
@@ -31,19 +30,22 @@ export default function ProjectEditorPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+      <div className="min-h-screen bg-[#0d1117] flex items-center justify-center">
+        <span className="text-xs font-mono text-zinc-600 animate-pulse">// loading project...</span>
       </div>
     );
   }
 
   if (notFound || !project) {
     return (
-      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center text-zinc-400">
+      <div className="min-h-screen bg-[#0d1117] flex items-center justify-center">
         <div className="text-center">
-          <p className="text-lg font-semibold mb-2">Project not found</p>
-          <button onClick={() => router.push('/dashboard/projects')} className="text-sm text-blue-400 hover:underline">
-            Back to projects
+          <p className="text-sm font-mono text-zinc-500">// project not found</p>
+          <button
+            onClick={() => router.push('/dashboard/projects')}
+            className="text-xs font-mono text-[#4FC3F7] hover:underline mt-3 block"
+          >
+            ← back to projects
           </button>
         </div>
       </div>
@@ -51,45 +53,31 @@ export default function ProjectEditorPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-zinc-100 flex flex-col">
-      {/* Glow */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[500px] h-[400px] bg-blue-600/4 rounded-full blur-[120px]" />
-      </div>
-
+    <div className="min-h-screen bg-[#0d1117] text-zinc-100 flex flex-col">
       {/* Header */}
-      <header className="relative z-10 border-b border-zinc-800/60 bg-zinc-950/60 backdrop-blur-md px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      <header className="border-b border-zinc-800/60 px-6 py-3 flex items-center justify-between bg-[#0d1117]">
+        <div className="flex items-center gap-4 font-mono text-sm">
           <button
             onClick={() => router.push('/dashboard/projects')}
-            className="flex items-center gap-1.5 text-zinc-500 hover:text-zinc-300 text-sm transition-colors"
+            className="text-zinc-600 hover:text-zinc-300 transition-colors text-xs"
           >
-            <ArrowLeft size={14} />
-            Projects
+            ← projects
           </button>
-          <span className="text-zinc-700">/</span>
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-md bg-gradient-to-br from-blue-500/20 to-violet-500/20 border border-zinc-700 flex items-center justify-center">
-              <FileCode2 size={10} className="text-blue-300" />
-            </div>
-            <span className="text-sm font-semibold text-zinc-100">{project.name}</span>
-          </div>
+          <span className="text-zinc-800">/</span>
+          <span className="text-zinc-300">{project.name}</span>
         </div>
 
         <button
           onClick={handleToggleStar}
-          className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-zinc-800 hover:border-zinc-600 transition-all text-zinc-500 hover:text-zinc-300"
+          className="text-xs font-mono transition-colors"
+          style={{ color: project.isStarred ? '#F9A825' : '#3f3f46' }}
         >
-          <Star
-            size={12}
-            className={project.isStarred ? 'fill-amber-400 text-amber-400' : ''}
-          />
-          {project.isStarred ? 'Starred' : 'Star'}
+          {project.isStarred ? '★ starred' : '☆ star'}
         </button>
       </header>
 
-      {/* Editor body */}
-      <div className="relative z-10 flex flex-1 overflow-hidden p-6 gap-6 h-[calc(100vh-57px)]">
+      {/* Editor */}
+      <div className="flex flex-1 overflow-hidden h-[calc(100vh-49px)]">
         <ProjectEditor project={project} />
       </div>
     </div>
