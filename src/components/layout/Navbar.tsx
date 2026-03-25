@@ -3,13 +3,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getAccessToken, clearTokens } from "@/lib/tokens";
 import { logout } from "@/service/auth.service";
+import { navLinks } from "@/config/nav";
 import { Button } from "@/components/ui/buttons";
-
-const navLinks = [
-  { label: "Features", href: "#features" },
-  { label: "Docs", href: "#docs" },
-  { label: "Pricing", href: "#pricing" },
-] as const;
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);

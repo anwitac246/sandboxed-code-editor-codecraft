@@ -1,8 +1,4 @@
-const footerLinks = [
-  { label: "Docs", href: "#docs" },
-  { label: "GitHub", href: "#github" },
-  { label: "Contact", href: "#contact" },
-] as const;
+import { footerLinks } from "@/config/nav";
 
 export function Footer() {
   return (
