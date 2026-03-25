@@ -101,7 +101,7 @@ export function EditorLayout({ project }: EditorLayoutProps) {
             </>
           ) : (
             <>
-              <span className="text-[10px]">▶</span>
+              <span className="text-[10px]">►</span>
               Run Code
             </>
           )}
