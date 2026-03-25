@@ -1,23 +1,22 @@
 "use client";
 
-
 import { useState, useCallback } from "react";
 import { loginWithEmail, loginWithGoogle, storeTokens } from "@/service/auth.service";
 import type { LoginRequest, FormErrors, LoginResponse } from "@/types/auth";
 
 interface UseAuthReturn {
-  isLoading: boolean;
-  isGoogleLoading: boolean;
-  errors: FormErrors;
+  isLoading:        boolean;
+  isGoogleLoading:  boolean;
+  errors:           FormErrors;
   handleEmailLogin: (data: LoginRequest) => Promise<LoginResponse | null>;
   handleGoogleLogin: () => Promise<void>;
-  clearErrors: () => void;
+  clearErrors:      () => void;
 }
 
 export function useAuth(): UseAuthReturn {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading,       setIsLoading]       = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [errors,          setErrors]          = useState<FormErrors>({});
 
   const clearErrors = useCallback(() => setErrors({}), []);
 
@@ -29,8 +28,9 @@ export function useAuth(): UseAuthReturn {
       try {
         const response = await loginWithEmail(data);
 
-        // Persist tokens — swap storeTokens implementation for real storage
-        storeTokens(response.token, response.refreshToken);
+        // response.token / response.refreshToken are the flat aliases
+        // normalised in auth.service — no breaking change to this hook's callers
+        storeTokens(response.token, response.refreshToken, response.expiresAt);
 
         // TODO: Update global auth context / redirect
         // e.g. router.push("/dashboard")
@@ -54,7 +54,7 @@ export function useAuth(): UseAuthReturn {
 
     try {
       await loginWithGoogle();
-      // TODO: Handle OAuth redirect / callback
+      // TODO: Handle redirect / update global auth context
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Google sign-in failed.";

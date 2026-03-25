@@ -52,10 +52,10 @@ function validate(email: string, password: string): FormErrors {
 }
 
 export function LoginForm() {
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPwd, setShowPwd] = useState(false);
+  const [mode,        setMode]        = useState<"signin" | "signup">("signin");
+  const [email,       setEmail]       = useState("");
+  const [password,    setPassword]    = useState("");
+  const [showPwd,     setShowPwd]     = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FormErrors>({});
 
   const { isLoading, isGoogleLoading, errors, handleEmailLogin, handleGoogleLogin, clearErrors } = useAuth();
@@ -73,7 +73,7 @@ export function LoginForm() {
     setFieldErrors({});
     const data: LoginRequest = { email: email.trim(), password };
     await handleEmailLogin(data);
-  }, [email, password, handleEmailLogin]);
+  }, [email, password, mode, handleEmailLogin]);
 
   const combined: FormErrors = { ...fieldErrors, ...errors };
   const isSignIn = mode === "signin";
@@ -92,7 +92,6 @@ export function LoginForm() {
 
   return (
     <>
-    
       <div className="flex items-center justify-center gap-0.5 mb-7" role="tablist">
         <button
           role="tab"
@@ -119,19 +118,17 @@ export function LoginForm() {
         </button>
       </div>
 
-    
       <div className="flex items-center gap-3 text-[0.8125rem] text-[#8fa3c0] mb-[0.875rem]">
         <div className="flex-1 h-px bg-white/[0.07]" />
         Sign in with
         <div className="flex-1 h-px bg-white/[0.07]" />
       </div>
 
-      
       <div className="grid grid-cols-2 gap-2 mb-[1.125rem]">
         <button
           type="button"
           className={oauthBtn}
-          disabled={isGoogleLoading}
+          disabled={isGoogleLoading || isLoading}
           onClick={handleGoogleLogin}
           aria-label="Sign in with Google"
         >
@@ -141,21 +138,20 @@ export function LoginForm() {
         <button
           type="button"
           className={oauthBtn}
-          aria-label="Sign in with GitHub"
+          disabled
+          aria-label="Sign in with GitHub (coming soon)"
         >
           <GitHubIcon />
           GitHub
         </button>
       </div>
 
-   
-      <div className="flex items-center gap-3 text-[0.8rem] text-[#4a6080] my-[1.125rem]" role="separator" aria-label="or continue with email">
+      <div className="flex items-center gap-3 text-[0.8rem] text-[#4a6080] my-[1.125rem]" role="separator">
         <div className="flex-1 h-px bg-white/[0.07]" />
         or continue with email
         <div className="flex-1 h-px bg-white/[0.07]" />
       </div>
 
-      
       {combined.general && (
         <div role="alert" className="flex items-start gap-2 bg-red-500/[0.06] border border-red-400/20 rounded-lg px-3 py-2.5 text-[0.8rem] text-red-400 mb-4 leading-relaxed">
           <svg className="shrink-0 mt-[1px]" width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
@@ -166,8 +162,6 @@ export function LoginForm() {
       )}
 
       <form onSubmit={onSubmit} noValidate className="flex flex-col gap-0">
-
-   
         <div className="flex flex-col gap-[5px] mb-[0.8125rem]">
           <label htmlFor="email" className="text-[0.875rem] font-medium text-[#f0f4ff]">
             Email
@@ -191,7 +185,6 @@ export function LoginForm() {
           )}
         </div>
 
-        {/* Password */}
         <div className="flex flex-col gap-[5px] mb-[0.8125rem]">
           <label htmlFor="password" className="text-[0.875rem] font-medium text-[#f0f4ff]">
             Password
@@ -219,11 +212,12 @@ export function LoginForm() {
               {showPwd ? <EyeOnIcon /> : <EyeOffIcon />}
             </button>
           </div>
-          {/* Forgot password — sign in only */}
           {isSignIn && (
             <div className="flex justify-end mt-[3px]">
-              <Link href="/auth/forgot-password"
-                className="text-[0.74rem] text-blue-400 hover:text-blue-300 transition-colors hover:underline underline-offset-2">
+              <Link
+                href="/auth/forgot-password"
+                className="text-[0.74rem] text-blue-400 hover:text-blue-300 transition-colors hover:underline underline-offset-2"
+              >
                 Forgot password?
               </Link>
             </div>
@@ -235,7 +229,6 @@ export function LoginForm() {
           )}
         </div>
 
-        {/* Submit */}
         <button
           type="submit"
           disabled={isLoading}
@@ -245,7 +238,6 @@ export function LoginForm() {
         </button>
       </form>
 
-      {/* ── Card footer ───────────────────────────────── */}
       <div className="text-center mt-[1.125rem] text-[0.79rem] text-[#4a6080] leading-[1.7]">
         <div className="mb-1">
           {isSignIn ? "Don't have an account?" : "Already have an account?"}{" "}

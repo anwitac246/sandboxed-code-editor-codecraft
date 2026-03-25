@@ -1,73 +1,92 @@
-// ─── Auth Service ─────────────────────────────────────────────────────────────
-// All API interactions are isolated here. Swap the implementation
-// (REST, Firebase, Supabase, etc.) without touching any UI component.
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signOut,
+  getIdToken,
+  type User as FirebaseUser,
+} from "firebase/auth";
 
+import { firebaseAuth } from "@/lib/firebase-config";
+import { getCaptchaToken } from "@/lib/recaptcha";
+import { storeTokens, clearTokens } from "@/lib/tokens";
 import type { LoginRequest, LoginResponse } from "@/types/auth";
 
-// Base URL is read from env — never hardcoded
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
-// ── Email / Password ──────────────────────────────────────────────────────────
+type BackendLoginResponse = {
+  user: LoginResponse["user"];
+  tokens: LoginResponse["tokens"];
+};
 
-export const loginWithEmail = async (
-  data: LoginRequest
-): Promise<LoginResponse> => {
-  // TODO: Replace with real fetch once backend is ready
-  // Example REST call:
-  //
-  // const res = await fetch(`${API_BASE}/auth/login`, {
-  //   method: "POST",
-  //   headers: { "Content-Type": "application/json" },
-  //   body: JSON.stringify(data),
-  // });
-  // if (!res.ok) {
-  //   const error = await res.json();
-  //   throw new Error(error.message ?? "Login failed");
-  // }
-  // return res.json();
+async function exchangeFirebaseToken(
+  firebaseUser: FirebaseUser,
+  captchaAction: string
+): Promise<LoginResponse> {
+  const [idToken, captchaToken] = await Promise.all([
+    getIdToken(firebaseUser),
+    getCaptchaToken(captchaAction),
+  ]);
 
-  // ── Placeholder (remove when backend is integrated) ──────────────────────
-  await new Promise((resolve) => setTimeout(resolve, 1200));
+  const res = await fetch(`${API_BASE}/api/v1/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id_token: idToken, captcha_token: captchaToken }),
+  });
 
-  if (data.email === "error@test.com") {
-    throw new Error("Invalid email or password.");
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ message: "Authentication failed" }));
+    throw new Error(err.message ?? "Authentication failed");
   }
 
+  const { data }: { data: BackendLoginResponse } = await res.json();
+
+  // Normalise: expose flat aliases so existing useAuth callers keep working
   return {
-    token: "mock.jwt.token",
-    refreshToken: "mock.refresh.token",
-    expiresAt: Date.now() + 3600 * 1000,
-    user: {
-      id: "usr_01",
-      email: data.email,
-      name: "Demo User",
-    },
+    ...data,
+    token:        data.tokens.access_token,
+    refreshToken: data.tokens.refresh_token,
+    expiresAt:    data.tokens.expires_at,
   };
+}
+
+export const loginWithEmail = async (req: LoginRequest): Promise<LoginResponse> => {
+  const credential = await signInWithEmailAndPassword(
+    firebaseAuth,
+    req.email,
+    req.password
+  );
+  const data = await exchangeFirebaseToken(credential.user, "email_login");
+  storeTokens(data.tokens.access_token, data.tokens.refresh_token, data.tokens.expires_at);
+  return data;
 };
 
-// ── OAuth — Google ────────────────────────────────────────────────────────────
-
-export const loginWithGoogle = async (): Promise<void> => {
-  // TODO: Implement Google OAuth flow
-  // Options:
-  //   • next-auth  → signIn("google")
-  //   • Firebase   → signInWithPopup(auth, new GoogleAuthProvider())
-  //   • Custom     → window.location.href = `${API_BASE}/auth/google`
-
-  await new Promise((resolve) => setTimeout(resolve, 800));
-  // Placeholder — no-op until OAuth is configured
+export const registerWithEmail = async (req: LoginRequest): Promise<LoginResponse> => {
+  const credential = await createUserWithEmailAndPassword(
+    firebaseAuth,
+    req.email,
+    req.password
+  );
+  const data = await exchangeFirebaseToken(credential.user, "email_register");
+  storeTokens(data.tokens.access_token, data.tokens.refresh_token, data.tokens.expires_at);
+  return data;
 };
 
-// ── Token Helpers (ready for JWT integration) ─────────────────────────────────
+export const loginWithGoogle = async (): Promise<LoginResponse> => {
+  const provider = new GoogleAuthProvider();
+  provider.addScope("email");
+  provider.addScope("profile");
 
-export const storeTokens = (token: string, refreshToken: string): void => {
-  // TODO: Store securely (httpOnly cookies via server action preferred over localStorage)
-  // Example cookie approach:
-  //   document.cookie = `auth_token=${token}; Secure; SameSite=Strict; Path=/`;
-  void token;
-  void refreshToken;
+  const credential = await signInWithPopup(firebaseAuth, provider);
+  const data = await exchangeFirebaseToken(credential.user, "google_login");
+  storeTokens(data.tokens.access_token, data.tokens.refresh_token, data.tokens.expires_at);
+  return data;
 };
 
-export const clearTokens = (): void => {
-  // TODO: Clear auth cookies / storage
+export const logout = async (): Promise<void> => {
+  await signOut(firebaseAuth);
+  clearTokens();
 };
+
+export { storeTokens, clearTokens };

@@ -1,30 +1,34 @@
 export interface LoginRequest {
-  email: string;
+  email:    string;
   password: string;
 }
 
 export interface AuthUser {
-  id: string;
-  email: string;
-  name: string;
-  avatarUrl?: string;
+  id:        string;
+  email:     string;
+  name:      string;
+  provider?: string;
 }
 
+export interface AuthTokens {
+  access_token:  string;
+  refresh_token: string;
+  expires_at:    number;
+}
+
+// LoginResponse matches the backend envelope AND preserves the flat token
+// fields your existing useAuth hook reads (token / refreshToken).
 export interface LoginResponse {
-  token: string;
+  user:         AuthUser;
+  tokens:       AuthTokens;
+  // Flat aliases kept for backwards-compat with existing useAuth
+  token:        string;
   refreshToken: string;
-  expiresAt: number; // Unix timestamp
-  user: AuthUser;
-}
-
-export interface AuthError {
-  code: string;
-  message: string;
-  field?: keyof LoginRequest;
+  expiresAt:    number;
 }
 
 export interface FormErrors {
-  email?: string;
+  email?:    string;
   password?: string;
-  general?: string;
+  general?:  string;
 }
