@@ -24,8 +24,8 @@ export default function ProjectEditorPage() {
 
   if (loading) {
     return (
-      <div className="h-screen bg-[#0d1117] flex items-center justify-center">
-        <span className="text-[10px] font-mono text-zinc-700 animate-pulse">
+      <div className="h-screen bg-background flex items-center justify-center">
+        <span className="text-[10px] text-muted-foreground animate-pulse">
           // loading workspace...
         </span>
       </div>
@@ -34,12 +34,12 @@ export default function ProjectEditorPage() {
 
   if (notFound || !project) {
     return (
-      <div className="h-screen bg-[#0d1117] flex items-center justify-center">
+      <div className="h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <p className="text-sm font-mono text-zinc-600">// project not found</p>
+          <p className="text-sm text-muted-foreground">// project not found</p>
           <button
             onClick={() => router.push('/dashboard/projects')}
-            className="text-xs font-mono text-[#4FC3F7] hover:underline mt-3 block mx-auto"
+            className="text-xs text-primary hover:underline mt-3 block mx-auto"
           >
             ← back to projects
           </button>
@@ -49,22 +49,22 @@ export default function ProjectEditorPage() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-[#0d1117] overflow-hidden">
+    <div className="h-screen flex flex-col bg-background overflow-hidden">
       {/* Topbar */}
-      <header className="flex items-center justify-between px-5 py-2.5 border-b border-zinc-800/60 bg-[#080b0f] shrink-0">
-        <div className="flex items-center gap-4 font-mono">
+      <header className="flex items-center justify-between px-5 py-2.5 border-b border-border bg-card shrink-0">
+        <div className="flex items-center gap-4">
           <button
             onClick={() => router.push('/dashboard/projects')}
-            className="text-[10px] text-zinc-700 hover:text-zinc-400 transition-colors uppercase tracking-widest"
+            className="text-[10px] text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest"
           >
             ← projects
           </button>
-          <span className="text-zinc-800 text-xs">/</span>
-          <span className="text-xs text-zinc-500">{project.name}</span>
+          <span className="text-border text-xs">/</span>
+          <span className="text-xs text-muted-foreground">{project.name}</span>
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="text-[10px] font-mono text-zinc-700 uppercase tracking-widest">
+          <span className="text-[10px] text-muted-foreground uppercase tracking-widest">
             {project.files.length} file{project.files.length !== 1 ? 's' : ''}
           </span>
         </div>

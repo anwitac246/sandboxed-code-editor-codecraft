@@ -73,14 +73,14 @@ export function EditorLayout({ project }: EditorLayoutProps) {
   const activeFile = getActiveFile();
 
   return (
-    <div className="flex flex-col flex-1 overflow-hidden bg-[#0d1117] h-full">
+    <div className="flex flex-col flex-1 overflow-hidden bg-background h-full">
       {/* Top action bar */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-800/60 bg-[#0b0f14] shrink-0">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-card shrink-0">
         <div className="flex items-center gap-3">
-          <span className="text-[#4FC3F7] font-mono text-sm font-bold">
+          <span className="text-primary font-mono text-sm font-bold">
             &lt;/&gt;
           </span>
-          <span className="text-zinc-700 font-mono text-xs">
+          <span className="text-muted-foreground font-mono text-xs">
             {project.name}
           </span>
         </div>
@@ -88,15 +88,15 @@ export function EditorLayout({ project }: EditorLayoutProps) {
         <button
           onClick={handleRun}
           disabled={isRunning}
-          className={`flex items-center gap-2 px-4 py-1.5 text-xs font-mono border transition-all ${
+          className={`flex items-center gap-2 px-4 py-1.5 text-xs border transition-all ${
             isRunning
-              ? 'border-zinc-800 text-zinc-700 cursor-not-allowed'
-              : 'border-zinc-700 text-zinc-300 hover:border-[#4FC3F7]/50 hover:text-[#4FC3F7] hover:bg-[#4FC3F7]/5'
+              ? 'border-border text-muted-foreground cursor-not-allowed'
+              : 'border-border text-secondary-foreground hover:border-primary/50 hover:text-primary hover:bg-primary/5'
           }`}
         >
           {isRunning ? (
             <>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#4FC3F7] animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
               running...
             </>
           ) : (

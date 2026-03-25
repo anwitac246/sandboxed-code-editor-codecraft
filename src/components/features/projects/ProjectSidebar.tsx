@@ -29,7 +29,7 @@ export function ProjectSidebar({
       <ProjectSearch value={search} onChange={onSearchChange} />
 
       <nav className="flex flex-col gap-0.5">
-        <p className="text-[10px] uppercase tracking-[0.15em] text-zinc-600 mb-2 font-mono">
+        <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mb-2">
           Library
         </p>
         {nav.map(({ id, label, count }) => (
@@ -38,12 +38,12 @@ export function ProjectSidebar({
             onClick={() => onFilterChange(id)}
             className={`flex items-center justify-between px-0 py-2 text-sm transition-all border-l-2 pl-3 ${
               filterView === id
-                ? 'border-[#4FC3F7] text-[#4FC3F7]'
-                : 'border-transparent text-zinc-500 hover:text-zinc-300 hover:border-zinc-600'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
             }`}
           >
             <span>{label}</span>
-            <span className="text-xs font-mono text-zinc-600">{count}</span>
+            <span className="text-xs text-muted-foreground">{count}</span>
           </button>
         ))}
       </nav>

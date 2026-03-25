@@ -31,7 +31,7 @@ export function ProjectCard({ project, onToggleStar }: ProjectCardProps) {
   return (
     <div
       onClick={() => router.push(`/dashboard/projects/${project.id}`)}
-      className="group relative border border-zinc-800/80 bg-[#0d1117] cursor-pointer transition-all duration-200 hover:border-zinc-600 p-6 flex flex-col gap-4"
+      className="group relative border border-border bg-background cursor-pointer transition-all duration-200 hover:border-secondary p-6 flex flex-col gap-4"
     >
       {/* Top accent line on hover */}
       <div
@@ -43,7 +43,7 @@ export function ProjectCard({ project, onToggleStar }: ProjectCardProps) {
 
       {/* Header */}
       <div className="flex items-start justify-between">
-        <h3 className="text-sm font-semibold text-zinc-100 tracking-tight leading-snug">
+        <h3 className="text-sm font-semibold text-foreground tracking-tight leading-snug">
           {project.name}
         </h3>
         <button
@@ -51,15 +51,15 @@ export function ProjectCard({ project, onToggleStar }: ProjectCardProps) {
             e.stopPropagation();
             onToggleStar(project.id);
           }}
-          className="text-xs font-mono transition-colors ml-4 shrink-0"
-          style={{ color: project.isStarred ? '#F9A825' : '#3f3f46' }}
+          className="text-xs transition-colors ml-4 shrink-0"
+          style={{ color: project.isStarred ? '#F9A825' : 'var(--muted-foreground)' }}
         >
           {project.isStarred ? '★' : '☆'}
         </button>
       </div>
 
       {/* Description */}
-      <p className="text-xs text-zinc-500 leading-relaxed line-clamp-2 font-mono flex-1">
+      <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 flex-1">
         {project.description ?? '// no description'}
       </p>
 
@@ -70,16 +70,16 @@ export function ProjectCard({ project, onToggleStar }: ProjectCardProps) {
             <span
               key={lang}
               className="text-[10px] font-mono uppercase tracking-wider"
-              style={{ color: langColors[lang] ?? '#71717a' }}
+              style={{ color: langColors[lang] ?? 'var(--muted-foreground)' }}
             >
               {lang}
             </span>
           ))}
           {langs.length === 0 && (
-            <span className="text-[10px] font-mono text-zinc-700">empty</span>
+            <span className="text-[10px] font-mono text-muted-foreground">empty</span>
           )}
         </div>
-        <span className="text-[10px] font-mono text-zinc-700">
+        <span className="text-[10px] text-muted-foreground">
           {timeAgo(project.updatedAt)}
         </span>
       </div>
