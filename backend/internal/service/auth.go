@@ -33,11 +33,16 @@ type captchaResponse struct {
 	ErrorCodes []string `json:"error-codes"`
 }
 
-func (s *AuthService) VerifyCaptcha(ctx context.Context, token string) error {
-	resp, err := http.PostForm(s.cfg.Captcha.VerifyURL, url.Values{
+func (s *AuthService) VerifyCaptcha(ctx context.Context, token, remoteIP string) error {
+	values := url.Values{
 		"secret":   {s.cfg.Captcha.SecretKey},
 		"response": {token},
-	})
+	}
+	if remoteIP != "" {
+		values.Set("remoteip", remoteIP)
+	}
+
+	resp, err := http.PostForm(s.cfg.Captcha.VerifyURL, values)
 	if err != nil {
 		return apperrors.ErrCaptchaFailed
 	}

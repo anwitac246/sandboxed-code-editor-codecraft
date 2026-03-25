@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 
 	"github.com/anwitac246/sandboxed-code-editor-codecraft/backend/internal/api"
@@ -20,6 +21,10 @@ import (
 )
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		panic("failed to load .env file: " + err.Error())
+	}
+
 	cfg, err := config.Load("./configs/config.yaml")
 	if err != nil {
 		panic("failed to load config: " + err.Error())

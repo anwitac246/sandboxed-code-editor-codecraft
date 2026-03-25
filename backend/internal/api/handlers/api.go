@@ -24,7 +24,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	if err := h.authSvc.VerifyCaptcha(c.Request.Context(), req.CaptchaToken); err != nil {
+	if err := h.authSvc.VerifyCaptcha(c.Request.Context(), req.CaptchaToken, c.ClientIP()); err != nil {
 		if appErr, ok := err.(*apperrors.AppError); ok {
 			utils.Fail(c, appErr)
 			return
