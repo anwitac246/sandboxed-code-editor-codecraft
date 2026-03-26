@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Project } from '@/types/project';
-import { projectService } from '@/service/project.service';
+import { getProjects, toggleStar as toggleStarService } from '@/service/project.service';
 
 type SortOrder = 'newest' | 'oldest';
 type FilterView = 'all' | 'starred';
@@ -15,14 +15,14 @@ export function useProjects() {
   const [filterView, setFilterView] = useState<FilterView>('all');
 
   useEffect(() => {
-    projectService.getProjects().then((data) => {
+    getProjects().then((data) => {
       setProjects(data);
       setLoading(false);
     });
   }, []);
 
   const toggleStar = useCallback(async (projectId: string) => {
-    const updated = await projectService.toggleStar(projectId);
+    const updated = await toggleStarService(projectId);
     if (updated) {
       setProjects((prev) =>
         prev.map((p) => (p.id === projectId ? updated : p))

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Project } from '@/types/project';
-import { projectService } from '@/service/project.service';
+import { getProjectById } from '@/service/project.service';
 import { EditorLayout } from '@/components/features/editor/EditorLayout';
 
 export default function ProjectEditorPage() {
@@ -15,7 +15,7 @@ export default function ProjectEditorPage() {
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
-    projectService.getProjectById(projectId).then((p) => {
+    getProjectById(projectId).then((p) => {
       if (!p) setNotFound(true);
       else setProject(p);
       setLoading(false);

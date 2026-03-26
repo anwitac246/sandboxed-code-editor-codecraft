@@ -1,13 +1,38 @@
 'use client';
 
-import { ProjectFile } from '@/types/project';
+import { ProjectFile, Language } from '@/types/project';
 
 const langColors: Record<string, string> = {
   typescript: '#4FC3F7',
   javascript: '#F9A825',
   html: '#EF6C00',
   css: '#AB47BC',
+  python: '#3776AB',
+  java: '#b07219',
+  rust: '#dea584',
+  go: '#00ADD8',
+  cpp: '#f34b7d',
 };
+
+export function langFromName(name: string): Language {
+  const ext = name.split('.').pop()?.toLowerCase() ?? '';
+  const extLangMap: Record<string, Language> = {
+    ts: 'typescript', tsx: 'typescript',
+    js: 'javascript', jsx: 'javascript',
+    py: 'python',
+    rs: 'rust',
+    go: 'go',
+    java: 'java',
+    cpp: 'cpp', h: 'cpp', cxx: 'cpp',
+    c: 'c',
+    rb: 'ruby',
+    html: 'html', htm: 'html',
+    css: 'css',
+    json: 'json',
+    md: 'markdown',
+  };
+  return extLangMap[ext] ?? 'plaintext';
+}
 
 interface FileTreeProps {
   files: ProjectFile[];

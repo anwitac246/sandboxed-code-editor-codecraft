@@ -59,7 +59,7 @@ export function useAuth(): UseAuthReturn {
     try {
       const response = await loginWithGoogle();
       if (response.user?.id) {
-        router.push(`/users/${response.user.id}/projects`);
+        router.push('/dashboard/projects');
       } else {
         router.push("/");
       }

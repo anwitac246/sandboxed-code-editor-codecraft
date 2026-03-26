@@ -2,12 +2,24 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { projectService } from '@/service/project.service';
+import { createProject } from '@/service/project.service';
+
+const LANGUAGES = [
+  "TypeScript",
+  "JavaScript",
+  "Python",
+  "Rust",
+  "Go",
+  "Java",
+  "C++",
+  "Other",
+];
 
 export default function NewProjectPage() {
   const router = useRouter();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [language, setLanguage] = useState(LANGUAGES[0]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -18,12 +30,15 @@ export default function NewProjectPage() {
     }
     setSubmitting(true);
     setError('');
-    await projectService.createProject({
+    await createProject({
       name: name.trim(),
       description: description.trim() || undefined,
+      language: language,
     });
     router.push('/dashboard/projects');
   };
+
+  const inputStyles = "bg-transparent border-b border-zinc-800 pb-2 text-sm text-zinc-200 placeholder-zinc-700 focus:outline-none focus:border-[#4FC3F7]/50 transition-colors font-mono";
 
   return (
     <div className="min-h-screen bg-[#0d1117] text-zinc-100 flex items-center justify-center px-6">
@@ -60,11 +75,29 @@ export default function NewProjectPage() {
               value={name}
               onChange={(e) => { setName(e.target.value); setError(''); }}
               placeholder="e.g. auth-module"
-              className="bg-transparent border-b border-zinc-800 pb-2 text-sm text-zinc-200 placeholder-zinc-700 focus:outline-none focus:border-[#4FC3F7]/50 transition-colors font-mono"
+              className={inputStyles}
             />
             {error && (
               <p className="text-xs font-mono text-red-400">{error}</p>
             )}
+          </div>
+
+          {/* Language */}
+          <div className="flex flex-col gap-2">
+            <label className="text-[10px] font-mono uppercase tracking-[0.15em] text-zinc-500">
+              language
+            </label>
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className={inputStyles + " bg-[#0d1117]"}
+            >
+              {LANGUAGES.map(lang => (
+                <option key={lang} value={lang} className="bg-[#161b22]">
+                  {lang}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Description */}
@@ -78,7 +111,7 @@ export default function NewProjectPage() {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="// what does this project do?"
               rows={3}
-              className="bg-transparent border-b border-zinc-800 pb-2 text-sm text-zinc-200 placeholder-zinc-700 focus:outline-none focus:border-[#4FC3F7]/50 transition-colors font-mono resize-none"
+              className={inputStyles + " resize-none"}
             />
           </div>
 
