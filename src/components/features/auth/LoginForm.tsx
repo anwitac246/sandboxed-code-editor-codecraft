@@ -72,7 +72,7 @@ export function LoginForm() {
     if (Object.keys(errs).length) { setFieldErrors(errs); return; }
     setFieldErrors({});
     const data: LoginRequest = { email: email.trim(), password };
-    await handleEmailLogin(data);
+    await handleEmailLogin(data, mode);
   }, [email, password, mode, handleEmailLogin]);
 
   const combined: FormErrors = { ...fieldErrors, ...errors };

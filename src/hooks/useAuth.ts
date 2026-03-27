@@ -2,14 +2,14 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { loginWithEmail, loginWithGoogle, storeTokens } from "@/service/auth.service";
+import { loginWithEmail, registerWithEmail, loginWithGoogle, storeTokens } from "@/service/auth.service";
 import type { LoginRequest, FormErrors, LoginResponse } from "@/types/auth";
 
 interface UseAuthReturn {
   isLoading:        boolean;
   isGoogleLoading:  boolean;
   errors:           FormErrors;
-  handleEmailLogin: (data: LoginRequest) => Promise<LoginResponse | null>;
+  handleEmailLogin: (data: LoginRequest, mode: "signin" | "signup") => Promise<LoginResponse | null>;
   handleGoogleLogin: () => Promise<void>;
   clearErrors:      () => void;
 }
@@ -23,12 +23,14 @@ export function useAuth(): UseAuthReturn {
   const clearErrors = useCallback(() => setErrors({}), []);
 
   const handleEmailLogin = useCallback(
-    async (data: LoginRequest): Promise<LoginResponse | null> => {
+    async (data: LoginRequest, mode: "signin" | "signup"): Promise<LoginResponse | null> => {
       setIsLoading(true);
       setErrors({});
 
       try {
-        const response = await loginWithEmail(data);
+        const response = mode === "signin"
+          ? await loginWithEmail(data)
+          : await registerWithEmail(data);
 
         storeTokens(response.token, response.refreshToken, response.expiresAt);
 
