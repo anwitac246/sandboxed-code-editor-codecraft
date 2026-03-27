@@ -2,8 +2,11 @@
 
 import { useCallback, useRef, useState } from "react";
 import { Project, ProjectFile } from "@/types/project";
-import FileTree, { langFromName } from "./FileTree";
-import { EditorPane } from "./EditorPane";
+import FileTree, { langFromName } from "@/components/features/editor/FileTree";
+import { EditorPane } from "@/components/features/editor/EditorPane";
+import { Terminal, TerminalLine } from "@/components/features/editor-viewer/Terminal";
+import { Allotment } from "allotment";
+import "allotment/style.css";
 import {
   updateProjectFile,
   addProjectFile,
@@ -67,6 +70,11 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
     message: string;
     onConfirm: () => void;
   } | null>(null);
+
+  const [terminalLines, setTerminalLines] = useState<TerminalLine[]>([]);
+  const [isTerminalRunning, setIsTerminalRunning] = useState(false);
+
+  const handleTerminalClear = () => setTerminalLines([]);
 
   const activeFile = files.find((f) => f.id === activeFileId) ?? null;
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -245,23 +253,40 @@ export default function ProjectEditor({ project }: ProjectEditorProps) {
         )}
 
         <div className="flex flex-1 overflow-hidden">
-          <FileTree
-            projectName={project.name}
-            files={files}
-            activeFileId={activeFileId}
-            onSelectFile={setActiveFileId}
-            onAddFile={handleAddFile}
-            onAddFolder={handleAddFolder}
-            onRenameFile={handleRenameFile}
-            onDeleteFile={handleDeleteFile}
-            onRenameFolder={handleRenameFolder}
-            onDeleteFolder={handleDeleteFolder}
-          />
-          <EditorPane
-            file={activeFile}
-            isSaving={isSaving}
-            onContentChange={handleContentChange}
-          />
+          <Allotment>
+            <Allotment.Pane preferredSize={240} minSize={180}>
+              <FileTree
+                projectName={project.name}
+                files={files}
+                activeFileId={activeFileId}
+                onSelectFile={setActiveFileId}
+                onAddFile={handleAddFile}
+                onAddFolder={handleAddFolder}
+                onRenameFile={handleRenameFile}
+                onDeleteFile={handleDeleteFile}
+                onRenameFolder={handleRenameFolder}
+                onDeleteFolder={handleDeleteFolder}
+              />
+            </Allotment.Pane>
+            <Allotment.Pane>
+              <Allotment vertical>
+                <Allotment.Pane>
+                  <EditorPane
+                    file={activeFile}
+                    isSaving={isSaving}
+                    onContentChange={handleContentChange}
+                  />
+                </Allotment.Pane>
+                <Allotment.Pane preferredSize={200} minSize={100}>
+                  <Terminal
+                    lines={terminalLines}
+                    isRunning={isTerminalRunning}
+                    onClear={handleTerminalClear}
+                  />
+                </Allotment.Pane>
+              </Allotment>
+            </Allotment.Pane>
+          </Allotment>
         </div>
       </div>
 

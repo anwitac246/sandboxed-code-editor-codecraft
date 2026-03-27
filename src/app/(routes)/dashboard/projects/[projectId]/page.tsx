@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Project } from '@/types/project';
 import { getProjectById } from '@/service/project.service';
-import { EditorLayout } from '@/components/features/editor/EditorLayout';
+import { EditorLayout } from '@/components/features/editor-viewer/EditorLayout';
 
 export default function ProjectEditorPage() {
   const params = useParams();
